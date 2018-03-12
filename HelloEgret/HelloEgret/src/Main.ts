@@ -2,8 +2,11 @@ class Main extends egret.DisplayObjectContainer {
 
     public constructor() {
         super();
-        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        // this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
         this.testFunc();
+        this.addEventListener(egret.Event.ADDED_TO_STAGE,()=>{
+            console.log("game enter");
+        },this);
     }
 
     //测试ts代码的入口

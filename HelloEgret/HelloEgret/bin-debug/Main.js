@@ -13,8 +13,11 @@ var Main = (function (_super) {
     function Main() {
         var _this = _super.call(this) || this;
         _this.icons = [];
-        _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
+        // this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
         _this.testFunc();
+        _this.addEventListener(egret.Event.ADDED_TO_STAGE, function () {
+            console.log("game enter");
+        }, _this);
         return _this;
     }
     //测试ts代码的入口

@@ -1,0 +1,13 @@
+{
+	"initial": [
+		"libs/modules/egret/egret.js",
+		"libs/modules/egret/egret.web.js",
+		"libs/modules/media/media.js",
+		"libs/modules/res/res.js",
+		"libs/modules/promise/promise.js"
+	],
+	"game": [
+		"bin-debug/Main.js",
+		"bin-debug/Platform.js"
+	]
+}

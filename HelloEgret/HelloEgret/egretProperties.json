@@ -1,0 +1,23 @@
+{
+  "engineVersion": "5.1.5",
+  "compilerVersion": "5.1.5",
+  "template": {},
+  "target": {
+    "current": "web"
+  },
+  "wasm": {},
+  "modules": [
+    {
+      "name": "egret"
+    },
+    {
+      "name": "media"
+    },
+    {
+      "name": "res"
+    },
+    {
+      "name": "promise"
+    }
+  ]
+}

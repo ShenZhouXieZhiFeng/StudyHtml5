@@ -9,7 +9,7 @@ class Main extends egret.DisplayObjectContainer {
     //测试ts代码的入口
     public testFunc() : void
     {
-        
+        let s = new stone("xzf");
     }
 
     private onAddToStage(event: egret.Event) {

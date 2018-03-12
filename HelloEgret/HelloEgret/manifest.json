@@ -8,6 +8,7 @@
 	],
 	"game": [
 		"bin-debug/Main.js",
-		"bin-debug/Platform.js"
+		"bin-debug/Platform.js",
+		"bin-debug/first/stone.js"
 	]
 }

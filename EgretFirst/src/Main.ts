@@ -62,9 +62,64 @@ class Main extends eui.UILayer {
         //     console.log(e.data);
         // },this);
         // timer.start();
+        this.myTest01();
     }
 
-    
+    myTest01():void
+    {
+        // let shp:egret.Shape = new egret.Shape();
+        // shp.graphics.beginFill(0xf0000,1);
+        // shp.graphics.drawRect(0,0,100,200);
+        // shp.graphics.endFill();
+        // this.addChild(shp);
+
+        // let infoText:egret.TextField;
+        // infoText = new egret.TextField();
+        // infoText.text = "stone";
+        // this.addChild(infoText);
+        // infoText.text = "change";
+
+        //HTTP
+        // let req = new egret.HttpRequest();
+        // req.response = egret.HttpResponseType.TEXT;
+        // req.open("http://httpbin.org/get",egret.HttpMethod.GET);
+        // req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // req.send();
+        // req.addEventListener(egret.Event.COMPLETE,(e:egret.Event):void=>{
+        //     let req = <egret.HttpRequest>e.currentTarget;
+        //     console.log("post data :",req.response);
+        // },this);
+        // req.addEventListener(egret.IOErrorEvent.IO_ERROR,(e:egret.IOErrorEvent):void=>{
+        //     console.log("HTTP IO_ERROR");
+        // },this);
+
+        //回调
+        // this.callBackTest((x:string)=>{
+        //     console.log("这是回调的输出" + x);
+        // });
+
+        // egret.startTick(this.tickFunc,this);
+
+        // console.log(egret.Capabilities.os);
+
+        // let map : {[k:string]:number} = 
+        // {
+        //     '1' : 1,
+        //     '2' : 2
+        // }
+
+        
+    }
+
+    tickFunc(t:number):boolean
+    {
+        console.log(egret.getTimer());
+        return false;
+    }
+
+    callBackTest(cb:Function):void{
+        cb(1);
+    }
 
     onTimerComplete(e:egret.TimerEvent):void
     {

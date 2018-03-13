@@ -95,19 +95,58 @@ var Main = (function (_super) {
         bg.x = 0;
         bg.y = 0;
         //设置点击事件
-        bg.touchEnabled = true; //启用该部件的点击
-        //设定相应的点击事件与函数
-        bg.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onBgTouchTap, this);
-        bg.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.onBgTouchMove, this);
-        bg.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onBgTouchBegin, this);
-        bg.addEventListener(egret.TouchEvent.TOUCH_END, this.onBgTouchEnd, this);
-        //定时器
-        var timer = new egret.Timer(1000, 10);
-        timer.addEventListener(egret.TimerEvent.TIMER, this.onTimerComplete, this);
-        timer.addEventListener(egret.TimerEvent.TIMER, function (e) {
-            console.log(e.data);
-        }, this);
-        timer.start();
+        // bg.touchEnabled = true;//启用该部件的点击
+        // //设定相应的点击事件与函数
+        // bg.addEventListener(egret.TouchEvent.TOUCH_TAP,this.onBgTouchTap,this);
+        // bg.addEventListener(egret.TouchEvent.TOUCH_MOVE,this.onBgTouchMove,this);
+        // bg.addEventListener(egret.TouchEvent.TOUCH_BEGIN,this.onBgTouchBegin,this);
+        // bg.addEventListener(egret.TouchEvent.TOUCH_END,this.onBgTouchEnd,this);
+        // //定时器
+        // let timer:egret.Timer = new egret.Timer(1000,10);
+        // timer.addEventListener(egret.TimerEvent.TIMER,this.onTimerComplete,this);
+        // timer.addEventListener(egret.TimerEvent.TIMER,(e:egret.TimerEvent)=>{
+        //     console.log(e.data);
+        // },this);
+        // timer.start();
+        this.myTest01();
+    };
+    Main.prototype.myTest01 = function () {
+        // let shp:egret.Shape = new egret.Shape();
+        // shp.graphics.beginFill(0xf0000,1);
+        // shp.graphics.drawRect(0,0,100,200);
+        // shp.graphics.endFill();
+        // this.addChild(shp);
+        // let infoText:egret.TextField;
+        // infoText = new egret.TextField();
+        // infoText.text = "stone";
+        // this.addChild(infoText);
+        // infoText.text = "change";
+        //HTTP
+        // let req = new egret.HttpRequest();
+        // req.response = egret.HttpResponseType.TEXT;
+        // req.open("http://httpbin.org/get",egret.HttpMethod.GET);
+        // req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // req.send();
+        // req.addEventListener(egret.Event.COMPLETE,(e:egret.Event):void=>{
+        //     let req = <egret.HttpRequest>e.currentTarget;
+        //     console.log("post data :",req.response);
+        // },this);
+        // req.addEventListener(egret.IOErrorEvent.IO_ERROR,(e:egret.IOErrorEvent):void=>{
+        //     console.log("HTTP IO_ERROR");
+        // },this);
+        //回调
+        // this.callBackTest((x:string)=>{
+        //     console.log("这是回调的输出" + x);
+        // });
+        // egret.startTick(this.tickFunc,this);
+        console.log(egret.Capabilities.os);
+    };
+    Main.prototype.tickFunc = function (t) {
+        console.log(egret.getTimer());
+        return false;
+    };
+    Main.prototype.callBackTest = function (cb) {
+        cb(1);
     };
     Main.prototype.onTimerComplete = function (e) {
         console.log("onTimerComplete");

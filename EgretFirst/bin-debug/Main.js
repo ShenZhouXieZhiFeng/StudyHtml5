@@ -87,13 +87,16 @@ var Main = (function (_super) {
     };
     Main.prototype.myCreateScene = function () {
         //加载背景图片
-        var bg = this.createBitmapByName("bg_jpg");
-        this.addChild(bg); //添加到容器中
-        //设置图片的宽高，以及坐标
-        bg.width = this.stage.stageWidth;
-        bg.height = this.stage.stage.height;
-        bg.x = 0;
-        bg.y = 0;
+        // let bg : egret.Bitmap = this.createBitmapByName("bg_jpg");
+        // this.addChild(bg);//添加到容器中
+        // //设置图片的宽高，以及坐标
+        // bg.width = this.stage.stageWidth;
+        // bg.height = this.stage.stage.height;
+        // bg.x = 0;
+        // bg.y = 0;
+        // let bgImg :eui.Image = new eui.Image();
+        // bgImg.source = "bg_jpg";
+        // this.addChild(bgImg);
         //设置点击事件
         // bg.touchEnabled = true;//启用该部件的点击
         // //设定相应的点击事件与函数
@@ -108,7 +111,125 @@ var Main = (function (_super) {
         //     console.log(e.data);
         // },this);
         // timer.start();
-        this.myTest01();
+        // this.myTest01();
+        // this.myTest02();
+        this.myTest03();
+    };
+    //Game库
+    Main.prototype.myTest03 = function () {
+        // let to :number = egret.setTimeout((arg)=>{
+        //     console.log("timeout : " + arg );
+        // },this,3000,"arg")
+        // egret.clearTimeout(to);
+        // console.log("start timeOut");
+        var shp = new egret.Shape();
+        shp.graphics.beginFill(0x00ff00);
+        shp.graphics.drawRect(0, 0, 100, 100);
+        shp.graphics.endFill();
+        shp.x = 50;
+        this.addChild(shp);
+        //缓动动画
+        var tw = egret.Tween.get(shp);
+        // tw.to({x:150},1000,egret.Ease.backInOut);
+        tw.to({ x: 250 }, 500).call(function () { console.log("右上角"); }).wait(100)
+            .to({ y: 250 }, 500).call(function () { console.log("右下角"); }).wait(100)
+            .to({ x: 50 }, 500).call(function () { console.log("左下角"); }).wait(100)
+            .to({ y: 50 }, 500).call(function () { console.log("左上角"); }).wait(100);
+    };
+    Main.prototype.myTest02 = function () {
+        //基本布局
+        // this.myGp = new eui.Group();
+        // this.addChild(this.myGp);
+        // this.myGp.width = this.width;
+        // this.myGp.height = this.height;
+        // this.myGp.layout = new eui.BasicLayout();
+        // //添加空心矩形
+        // let outline:egret.Shape = new egret.Shape();
+        // outline.graphics.lineStyle(3,0x00ff00);
+        // outline.graphics.beginFill(0x00,0);
+        // outline.graphics.drawRect(0,0,this.myGp.width,this.myGp.height);
+        // outline.graphics.endFill;
+        // this.myGp.addChild(outline);
+        // //基本布局_绝对定位
+        // for(let i = 0;i < 4; i ++)
+        // {
+        //     let btn:eui.Button = new eui.Button();
+        //     btn.x = 25 + i * 35;
+        //     btn.y = 40 + i * 65;
+        //     btn.label = "button" + i;
+        //     this.myGp.addChild(btn);
+        // }
+        // let btn1:eui.Button = new eui.Button();
+        // btn1.label = "horizontalCenter";
+        // btn1.horizontalCenter = 100;
+        // this.myGp.addChild(btn1);
+        //水平布局
+        // this.myGp = new eui.Group();
+        // this.addChild(this.myGp);
+        // // this.myGp.layout = new eui.HorizontalLayout();
+        // this.myGp.width = 500;
+        // this.myGp.height = 300;
+        //eui控件
+        // let label1:eui.Label = new eui.Label();
+        // label1.text = "eui label test";
+        // label1.style = "mylabel";
+        // this.addChild(label1);
+        // let rdb1 : eui.RadioButton = new eui.RadioButton();
+        // rdb1.label = "select 1";
+        // rdb1.value = 1;
+        // rdb1.groupName = "G1";
+        // this.addChild(rdb1);
+        // let rdb2 : eui.RadioButton = new eui.RadioButton();
+        // rdb2.label = "select 2";
+        // rdb2.value = 2;
+        // rdb2.groupName = "G1";
+        // rdb2.y = 30;
+        // this.addChild(rdb2);
+        // let rdb3 : eui.RadioButton = new eui.RadioButton();
+        // rdb3.label = "select 3";
+        // rdb3.value = 3;
+        // rdb3.groupName = "G1";
+        // rdb3.y = 60;
+        // this.addChild(rdb3);
+        // rdb1.addEventListener(eui.UIEvent.CHANGE,this.radioChange,this);
+        // rdb2.addEventListener(eui.UIEvent.CHANGE,this.radioChange,this);
+        // rdb3.addEventListener(eui.UIEvent.CHANGE,this.radioChange,this);
+        // let pal1 :eui.Panel = new eui.Panel();
+        // pal1.title = "titleHello";
+        // this.addChild(pal1);
+        // var group = new eui.Group();
+        // var img = new eui.Image("bg_jpg");
+        // group.addChild(img);
+        // //创建一个Scroller
+        // var myScroller = new eui.Scroller();
+        // //注意位置和尺寸的设置是在Scroller上面，而不是容器上面
+        // myScroller.width = 200;
+        // myScroller.height = 200;
+        // //设置viewport
+        // myScroller.viewport = group;
+        // this.addChild(myScroller);
+        // let sourceArr:any[] = [];
+        // for(var i:number = 1;i < 5; i ++)
+        // {
+        //     sourceArr.push({label:"item" + i});
+        // }
+        // let myCollection:eui.ArrayCollection = new eui.ArrayCollection(sourceArr);
+        // sourceArr[1] = "changed";
+        // let dg:eui.DataGroup = new eui.DataGroup();
+        // dg.dataProvider = myCollection;
+        // dg.percentWidth = 100;
+        // dg.percentHeight = 100;
+        // this.addChild(dg);
+        // dg.itemRenderer = LabelRenderer;
+        // let timer:egret.Timer = new egret.Timer(1000,2);
+        // timer.addEventListener(egret.TimerEvent.TIMER,(e:egret.TimerEvent)=>{
+        //     console.log("1");
+        //     sourceArr[2] = "changed";
+        // },this);
+        // timer.start();
+    };
+    Main.prototype.radioChange = function (e) {
+        console.log(e.target.value);
     };
     Main.prototype.myTest01 = function () {
         // let shp:egret.Shape = new egret.Shape();
@@ -139,7 +260,18 @@ var Main = (function (_super) {
         //     console.log("这是回调的输出" + x);
         // });
         // egret.startTick(this.tickFunc,this);
-        console.log(egret.Capabilities.os);
+        // console.log(egret.Capabilities.os);
+        // let map : {[k:string]:number} = 
+        // {
+        //     '1' : 1,
+        //     '2' : 2
+        // }
+        // let bt1 = new eui.Button();
+        // bt1.label = "Button";
+        // bt1.horizontalCenter = 0;
+        // bt1.verticalCenter = 0;
+        // bt1.skinName = "resource/eui_skins/ButtonSkin.exml";
+        // this.addChild(bt1);
     };
     Main.prototype.tickFunc = function (t) {
         console.log(egret.getTimer());

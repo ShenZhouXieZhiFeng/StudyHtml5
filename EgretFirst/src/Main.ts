@@ -67,7 +67,47 @@ class Main extends eui.UILayer {
         // timer.start();
         // this.myTest01();
         // this.myTest02();
-        this.myTest03();
+        // this.myTest03();
+        this.myTest04();
+    }
+
+    //TS补漏
+    myTest04()
+    {
+        //接口和类都具有说明功能，可以指定数组等变量的内容，可以实现字典等的功能
+        //类具有兼容性，只要两个类的公共属性一致即可兼容，类具有接口的一部分热性，接口也具有类的一部分功能
+        
+        //匿名函数的两种写法
+        let func1 = function(name:string):void{console.log(name)};
+        let func2 = (name:string):void=>{console.log(name)};
+
+        //函数参数限定 
+        let func3 = function(arg:1|2|3){console.log(arg)};
+        // func3(4);//报错
+
+        //函数不定参数个数
+        let func4 = function(arg1:number,...arg2:string[])
+        {
+            arg2.forEach(e=>{console.log(e)});
+        }
+        func4(1,'1','2','3');
+        func4(1);
+
+        // 函数可空参数
+        let func5 = function(arg1:number,arg2?:string)
+        {
+            //dosomething
+        }
+        func5(1);
+        func5(1,'2');
+
+        //Promise
+        let pro = new Promise(function(resolve,reject){
+
+        });
+        pro.then(success=>{},error=>{}).then(()=>{});
+        
+
     }
 
     //Game库

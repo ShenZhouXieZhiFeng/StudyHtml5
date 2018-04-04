@@ -106,8 +106,6 @@ class Main extends eui.UILayer {
 
         });
         pro.then(success=>{},error=>{}).then(()=>{});
-        
-
     }
 
     //Game库

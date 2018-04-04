@@ -583,14 +583,14 @@ var BoneSlot=(function(){
 	*@param index
 	*/
 	__proto.showDisplayByIndex=function(index){
-		if (this._replaceDic[index])index=this._replaceDic[index];
+		if (this._replaceDic[index]!=null)index=this._replaceDic[index];
 		if (this.currSlotData && index >-1 && index < this.currSlotData.displayArr.length){
 			this.displayIndex=index;
 			this.currDisplayData=this.currSlotData.displayArr[index];
 			if (this.currDisplayData){
 				var tName=this.currDisplayData.name;
 				this.currTexture=this.templet.getTexture(tName);
-				if (this.currTexture && Render.isWebGL && this.currDisplayData.type==0 && this.currDisplayData.uvs){
+				if (this.currTexture && !Render.isConchApp && this.currDisplayData.type==0 && this.currDisplayData.uvs){
 					this.currTexture=this.currDisplayData.createTexture(this.currTexture);
 				}
 			}
@@ -2345,6 +2345,11 @@ var SkinSlotDisplayData=(function(){
 			this.texture.sourceWidth=currTexture.sourceWidth;
 			this.texture.sourceHeight=currTexture.sourceHeight;
 		}
+		if (!Render.isWebGL){
+			if (this.uvs[1] > this.uvs[5]){
+				this.texture.offsetY=this.texture.sourceHeight-this.texture.height-this.texture.offsetY;
+			}
+		}
 		return this.texture;
 	}
 
@@ -3557,9 +3562,7 @@ var AnimationTemplet=(function(_super){
 		return Laya.loader.create(url,null,null,AnimationTemplet);
 	}
 
-	__static(AnimationTemplet,
-	['interpolation',function(){return this.interpolation=[AnimationTemplet._LinearInterpolation_0,AnimationTemplet._QuaternionInterpolation_1,AnimationTemplet._AngleInterpolation_2,AnimationTemplet._RadiansInterpolation_3,AnimationTemplet._Matrix4x4Interpolation_4,AnimationTemplet._NoInterpolation_5,AnimationTemplet._BezierInterpolation_6,AnimationTemplet._BezierInterpolation_7];}
-	]);
+	AnimationTemplet.interpolation=[AnimationTemplet._LinearInterpolation_0,AnimationTemplet._QuaternionInterpolation_1,AnimationTemplet._AngleInterpolation_2,AnimationTemplet._RadiansInterpolation_3,AnimationTemplet._Matrix4x4Interpolation_4,AnimationTemplet._NoInterpolation_5,AnimationTemplet._BezierInterpolation_6,AnimationTemplet._BezierInterpolation_7];
 	return AnimationTemplet;
 })(Resource)
 
@@ -5264,9 +5267,7 @@ var MovieClip=(function(_super){
 		this.load(path);
 	});
 
-	__static(MovieClip,
-	['_ValueList',function(){return this._ValueList=["x","y","width","height","scaleX","scaleY","rotation","alpha"];}
-	]);
+	MovieClip._ValueList=["x","y","width","height","scaleX","scaleY","rotation","alpha"];
 	return MovieClip;
 })(Sprite)
 

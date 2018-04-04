@@ -1364,7 +1364,7 @@ declare module laya.d3.animation {
         _unCachePropertyMap: Int32Array;
         _duration: number;
         _frameRate: number;
-        _events: Array<any>;
+        _animationEvents: Array<any>;
         _publicClipDatas: Array<any>;
         /**是否循环。*/
         islooping: boolean;
@@ -1536,6 +1536,7 @@ declare module laya.d3.animation {
      * <code>Transform3D</code> 类用于实现3D变换。
      */
     class AnimationTransform3D extends EventDispatcher {
+        _localRotationEuler: Float32Array;
         _owner: AnimationNode;
         _worldUpdate: boolean;
         _entity: Transform3D;
@@ -1800,7 +1801,7 @@ declare module laya.d3.component {
      */
     class Animator extends Component3D implements IDestroy {
         /**无效矩阵,禁止修改*/
-        static nanData: Float32Array;
+        static deafaultMatrix: Float32Array;
         _cacheNodesSpriteOwners: Array<any>;
         _curAvatarNodeDatas: Array<any>;
         _cacheNodesToSpriteMap: Array<any>;
@@ -3023,7 +3024,7 @@ declare module laya.d3.core {
         /**
          * @private
          */
-        _renderUpdate(projectionView: Matrix4x4): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
     }
 }
 declare module laya.d3.core {
@@ -5019,7 +5020,7 @@ declare module laya.d3.core {
         /**
          * @private
          */
-        _renderUpdate(projectionView: Matrix4x4): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
     }
 }
 declare module laya.d3.core {
@@ -5360,6 +5361,7 @@ declare module laya.d3.core.particleShuriKen.module {
 }
 declare module laya.d3.core.particleShuriKen.module {
     import IClone = laya.d3.core.IClone;
+    import Vector3 = laya.d3.math.Vector3;
     import Vector4 = laya.d3.math.Vector4;
     /**
      * <code>GradientRotation</code> 类用于创建渐变角速度。
@@ -5404,7 +5406,7 @@ declare module laya.d3.core.particleShuriKen.module {
          * @param	separateConstantMax  最大分轴固定角速度。
          * @return  渐变角速度。
          */
-        static createByRandomTwoConstantSeparate(separateConstantMin: Vector4, separateConstantMax: Vector4): GradientAngularVelocity;
+        static createByRandomTwoConstantSeparate(separateConstantMin: Vector3, separateConstantMax: Vector3): GradientAngularVelocity;
         /**
          * 通过随机双渐变角速度创建一个 <code>GradientAngularVelocity</code> 实例。
          * @param	gradientMin 最小渐变角速度。
@@ -5470,11 +5472,11 @@ declare module laya.d3.core.particleShuriKen.module {
         /**
          * 最小分轴随机双固定角速度。
          */
-        readonly constantMinSeparate: Vector4;
+        readonly constantMinSeparate: Vector3;
         /**
          * 最大分轴随机双固定角速度。
          */
-        readonly constantMaxSeparate: Vector4;
+        readonly constantMaxSeparate: Vector3;
         /**
          *最小渐变角速度。
          */
@@ -6686,7 +6688,7 @@ declare module laya.d3.core.particleShuriKen {
         /**
          * @inheritDoc
          */
-        _renderUpdate(projectionView: Matrix4x4): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
         /**
          * @inheritDoc
          */
@@ -7240,7 +7242,7 @@ declare module laya.d3.core.render {
         /**
          * @private
          */
-        _renderUpdate(projectionView: Matrix4x4): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
         /**
          * @private
          */
@@ -7262,7 +7264,7 @@ declare module laya.d3.core.render {
      * <code>IRender</code> 接口用于实现3D对象的渲染相关功能。
      */
     interface IRenderable {
-        _getVertexBuffer(index?: number): VertexBuffer3D;
+        _getVertexBuffer(index: number): VertexBuffer3D;
         _getIndexBuffer(): IndexBuffer3D;
         _beforeRender(state: RenderState): boolean;
         _getVertexBuffers(): Array<VertexBuffer3D>;
@@ -7988,7 +7990,7 @@ declare module laya.d3.core {
         /**
          * @inheritDoc
          */
-        _renderUpdate(projectionView: Matrix4x4): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
         _hasIndependentBound: boolean;
     }
 }
@@ -8270,6 +8272,463 @@ declare module laya.d3.core {
          * @inheritDoc
          */
         destroy(destroyChild?: boolean): void;
+    }
+}
+declare module laya.d3.core.trail.module {
+    class Color {
+        /**
+         * 红色
+         */
+        static RED: Color;
+        /**
+         * 绿色
+         */
+        static GREEN: Color;
+        /**
+         * 蓝色
+         */
+        static BLUE: Color;
+        /**
+         * 蓝绿色
+         */
+        static CYAN: Color;
+        /**
+         * 黄色
+         */
+        static YELLOW: Color;
+        /**
+         * 品红色
+         */
+        static MAGENTA: Color;
+        /**
+         * 灰色
+         */
+        static GRAY: Color;
+        /**
+         * 白色
+         */
+        static WHITE: Color;
+        /**
+         * 黑色
+         */
+        static BLACK: Color;
+        r: number;
+        g: number;
+        b: number;
+        a: number;
+        constructor(r: number, g: number, b: number, a: number);
+    }
+}
+declare module laya.d3.core.trail.module {
+    class Gradient {
+        _colorKeyData: Float32Array;
+        _alphaKeyData: Float32Array;
+        /**
+         * 获取梯度模式。
+         * @return  梯度模式。
+         */
+        /**
+         * 设置梯度模式。
+         * @param value 梯度模式。
+         */
+        mode: number;
+        /**
+         * 获取颜色值关键帧数据
+         */
+        /**
+         * 设置颜色值关键帧数据
+         */
+        colorKeys: Array<any>;
+        /**
+         * 获取透明度关键帧数据
+         */
+        /**
+         * 设置透明度关键帧数据
+         */
+        alphaKeys: Array<any>;
+        constructor();
+        /**
+         * 设置渐变，使用一组颜色关键帧数据和透明度关键帧数据。
+         * @param	colorKeys 渐变的颜色值关键帧数据(最大长度为10)。
+         * @param	alphaKeys 渐变的透明度关键帧数据(最大长度为10)。
+         */
+        setKeys(colorKeys: Array<any>, alphaKeys: Array<any>): void;
+    }
+}
+declare module laya.d3.core.trail.module {
+    class GradientAlphaKey {
+        /**
+         * 获取透明度。
+         * @return  透明度。
+         */
+        /**
+         * 设置透明度。
+         * @param value 透明度。
+         */
+        alpha: number;
+        /**
+         * 获取时间。
+         * @return  时间。
+         */
+        /**
+         * 设置时间。
+         * @param value 时间。
+         */
+        time: number;
+        constructor(alpha: number, time: number);
+    }
+}
+declare module laya.d3.core.trail.module {
+    class GradientColorKey {
+        /**
+         * 获取颜色值。
+         * @return  颜色值。
+         */
+        /**
+         * 设置颜色值。
+         * @param value 颜色值。
+         */
+        color: Color;
+        /**
+         * 获取时间。
+         * @return  时间。
+         */
+        /**
+         * 设置时间。
+         * @param value 时间。
+         */
+        time: number;
+        constructor(color: Color, time: number);
+    }
+}
+declare module laya.d3.core.trail.module {
+    /**
+     * ...
+     * @author ...
+     */
+    class GradientMode {
+        /**
+         * 找到与请求的评估时间相邻的两个键,并线性插值在他们之间,以获得一种混合的颜色。
+         */
+        static Blend: number;
+        /**
+         * 返回一个固定的颜色，通过查找第一个键的时间值大于所请求的评估时间。
+         */
+        static Fixed: number;
+    }
+}
+declare module laya.d3.core.trail.module {
+    /**
+     * ...
+     * @author ...
+     */
+    class TextureMode {
+        /**
+         * 拉伸模式。
+         */
+        static Stretch: number;
+        /**
+         * 平铺模式。
+         */
+        static Tile: number;
+    }
+}
+declare module laya.d3.core.trail.module {
+    class TrailKeyFrame {
+        time: number;
+        inTangent: number;
+        outTangent: number;
+        value: number;
+    }
+}
+declare module laya.d3.core.trail {
+    import GeometryFilter = laya.d3.core.GeometryFilter;
+    import IRenderable = laya.d3.core.render.IRenderable;
+    import RenderState = laya.d3.core.render.RenderState;
+    import Gradient = laya.d3.core.trail.module.Gradient;
+    import Vector3 = laya.d3.math.Vector3;
+    /**
+     * ...
+     * @author ...
+     */
+    class TrailFilter extends GeometryFilter {
+        _owner: TrailSprite3D;
+        _curtime: number;
+        _curSubTrailFinishPosition: Vector3;
+        _curSubTrailFinishDirection: Vector3;
+        _curSubTrailFinishCurTime: number;
+        _curSubTrailFinished: boolean;
+        _hasLifeSubTrail: boolean;
+        _trailTotalLength: number;
+        _trailSupplementLength: number;
+        _trailDeadLength: number;
+        /**
+         * 获取淡出时间。
+         * @return  淡出时间。
+         */
+        /**
+         * 设置淡出时间。
+         * @param value 淡出时间。
+         */
+        time: number;
+        /**
+         * 获取新旧顶点之间最小距离。
+         * @return  新旧顶点之间最小距离。
+         */
+        /**
+         * 设置新旧顶点之间最小距离。
+         * @param value 新旧顶点之间最小距离。
+         */
+        minVertexDistance: number;
+        /**
+         * 获取宽度倍数。
+         * @return  宽度倍数。
+         */
+        /**
+         * 设置宽度倍数。
+         * @param value 宽度倍数。
+         */
+        widthMultiplier: number;
+        /**
+         * 获取宽度曲线。
+         * @return  宽度曲线。
+         */
+        /**
+         * 设置宽度曲线。
+         * @param value 宽度曲线。
+         */
+        widthCurve: Array<any>;
+        /**
+         * 获取颜色梯度。
+         * @return  颜色梯度。
+         */
+        /**
+         * 设置颜色梯度。
+         * @param value 颜色梯度。
+         */
+        colorGradient: Gradient;
+        /**
+         * 获取纹理模式。
+         * @return  纹理模式。
+         */
+        /**
+         * 设置纹理模式。
+         * @param value 纹理模式。
+         */
+        textureMode: number;
+        constructor(owner: TrailSprite3D);
+        getRenderElementsCount(): number;
+        addRenderElement(): number;
+        getRenderElement(index: number): IRenderable;
+        _update(state: RenderState): void;
+        /**
+         * @private
+         */
+        _destroy(): void;
+    }
+}
+declare module laya.d3.core.trail {
+    import BaseMaterial = laya.d3.core.material.BaseMaterial;
+    import Vector4 = laya.d3.math.Vector4;
+    import BaseTexture = laya.d3.resource.BaseTexture;
+    import ShaderDefines = laya.d3.shader.ShaderDefines;
+    /**
+     * ...
+     * @author ...
+     */
+    class TrailMaterial extends BaseMaterial {
+        /** 默认材质，禁止修改*/
+        static defaultMaterial: TrailMaterial;
+        static SHADERDEFINE_DIFFUSETEXTURE: number;
+        static SHADERDEFINE_TILINGOFFSET: number;
+        static DIFFUSETEXTURE: number;
+        static TINTCOLOR: number;
+        static TILINGOFFSET: number;
+        static shaderDefines: ShaderDefines;
+        /**
+         * @private
+         */
+        static __init__(): void;
+        /**
+         * 加载标准材质。
+         * @param url 标准材质地址。
+         */
+        static load(url: string): TrailMaterial;
+        /**
+         * 获取颜色。
+         * @return 颜色。
+         */
+        /**
+         * 设置颜色。
+         * @param value 颜色。
+         */
+        tintColor: Vector4;
+        /**
+         * 获取贴图。
+         * @return 贴图。
+         */
+        /**
+         * 设置贴图。
+         * @param value 贴图。
+         */
+        diffuseTexture: BaseTexture;
+        /**
+         * 获取纹理平铺和偏移。
+         * @return 纹理平铺和偏移。
+         */
+        /**
+         * 设置纹理平铺和偏移。
+         * @param value 纹理平铺和偏移。
+         */
+        tilingOffset: Vector4;
+        constructor();
+    }
+}
+declare module laya.d3.core.trail {
+    import IRenderable = laya.d3.core.render.IRenderable;
+    import RenderElement = laya.d3.core.render.RenderElement;
+    import RenderState = laya.d3.core.render.RenderState;
+    import IndexBuffer3D = laya.d3.graphics.IndexBuffer3D;
+    import VertexBuffer3D = laya.d3.graphics.VertexBuffer3D;
+    /**
+     * ...
+     * @author ...
+     */
+    class TrailRenderElement implements IRenderable {
+        _id: number;
+        _isDead: boolean;
+        constructor(owner: TrailFilter);
+        /**
+         * 更新VertexBuffer2数据
+         */
+        _updateVertexBuffer2(): void;
+        /**
+         * @private
+         */
+        _updateDisappear(): void;
+        /**
+         * 渲染前调用
+         * @param	state 渲染状态
+         * @return  是否渲染
+         */
+        _beforeRender(state: RenderState): boolean;
+        /**
+         * 渲染时调用
+         * @param	state 渲染状态
+         */
+        _render(state: RenderState): void;
+        /**
+         * 获取vertexBuffer
+         * @param	index vertexBuffer索引
+         * @return vertexBuffer
+         */
+        _getVertexBuffer(index?: number): VertexBuffer3D;
+        /**
+         * 获取vertexBuffer数组
+         * @return vertexBuffer数组
+         */
+        _getVertexBuffers(): Array<any>;
+        /**
+         * 获取顶点索引缓冲
+         * @return 顶点索引缓冲
+         */
+        _getIndexBuffer(): IndexBuffer3D;
+        /**
+         * 获取vertexBuffer数量
+         * @return vertexBuffer数量
+         */
+        readonly _vertexBufferCount: number;
+        /**
+         * 获取三角面数量
+         * @return 三角面数量
+         */
+        readonly triangleCount: number;
+        /**
+         * @private
+         */
+        _renderRuntime(conchGraphics3D: any, renderElement: RenderElement, state: RenderState): void;
+        /**
+         * 重新激活该renderElement
+         */
+        reActivate(): void;
+        /**
+         * @private
+         */
+        _destroy(): void;
+    }
+}
+declare module laya.d3.core.trail {
+    import BaseRender = laya.d3.core.render.BaseRender;
+    import Matrix4x4 = laya.d3.math.Matrix4x4;
+    /**
+     * ...
+     * @author ...
+     */
+    class TrailRenderer extends BaseRender {
+        constructor(owner: TrailSprite3D);
+        protected _calculateBoundingBox(): void;
+        protected _calculateBoundingSphere(): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
+    }
+}
+declare module laya.d3.core.trail {
+    import ComponentNode = laya.d3.core.ComponentNode;
+    import RenderableSprite3D = laya.d3.core.RenderableSprite3D;
+    import BaseMaterial = laya.d3.core.material.BaseMaterial;
+    import RenderState = laya.d3.core.render.RenderState;
+    import ShaderDefines = laya.d3.shader.ShaderDefines;
+    /**
+     * ...
+     * @author ...
+     */
+    class TrailSprite3D extends RenderableSprite3D {
+        static CURTIME: number;
+        static LIFETIME: number;
+        static WIDTHCURVE: number;
+        static WIDTHCURVEKEYLENGTH: number;
+        static GRADIENTCOLORKEY: number;
+        static GRADIENTALPHAKEY: number;
+        static SHADERDEFINE_GRADIENTMODE_BLEND: number;
+        static shaderDefines: ShaderDefines;
+        /**
+         * @private
+         */
+        static __init__(): void;
+        /**
+         * 获取Trail过滤器。
+         * @return  Trail过滤器。
+         */
+        readonly trailFilter: TrailFilter;
+        /**
+         * 获取Trail渲染器。
+         * @return  Trail渲染器。
+         */
+        readonly trailRender: TrailRenderer;
+        constructor();
+        _changeRenderObjectsByMaterial(sender: TrailRenderer, index: number, material: BaseMaterial): void;
+        _changeRenderObjectsByRenderElement(index: number, trailRenderElement: TrailRenderElement): void;
+        protected _clearSelfRenderObjects(): void;
+        protected _addSelfRenderObjects(): void;
+        _update(state: RenderState): void;
+        protected _parseCustomProps(rootNode: ComponentNode, innerResouMap: any, customProps: any, json: any): void;
+        /**
+         * <p>销毁此对象。</p>
+         * @param	destroyChild 是否同时销毁子节点，若值为true,则销毁子节点，否则不销毁子节点。
+         */
+        destroy(destroyChild?: boolean): void;
+    }
+}
+declare module laya.d3.core.trail {
+    import IVertex = laya.d3.graphics.IVertex;
+    import VertexDeclaration = laya.d3.graphics.VertexDeclaration;
+    /**
+     * <code>VertexTrail</code> 类用于创建拖尾顶点结构。
+     */
+    class VertexTrail implements IVertex {
+        static readonly vertexDeclaration1: VertexDeclaration;
+        static readonly vertexDeclaration2: VertexDeclaration;
+        readonly vertexDeclaration: VertexDeclaration;
+        constructor();
     }
 }
 declare module laya.d3.core {
@@ -8627,6 +9086,153 @@ declare module laya.d3.core {
          * @inheritDoc
          */
         _renderCamera(gl: WebGLContext, state: RenderState, scene: Scene): void;
+    }
+}
+declare module laya.d3.extension.cartoonRender {
+    import BaseMaterial = laya.d3.core.material.BaseMaterial;
+    import Vector4 = laya.d3.math.Vector4;
+    import BaseTexture = laya.d3.resource.BaseTexture;
+    import ShaderDefines = laya.d3.shader.ShaderDefines;
+    class CartoonMaterial extends BaseMaterial {
+        static ALBEDOTEXTURE: number;
+        static SPECULARTEXTURE: number;
+        static TILINGOFFSET: number;
+        static SHADOWCOLOR: number;
+        static SHADOWRANGE: number;
+        static SHADOWINTENSITY: number;
+        static SPECULARRANGE: number;
+        static SPECULARINTENSITY: number;
+        static SHADERDEFINE_ALBEDOTEXTURE: number;
+        static SHADERDEFINE_SPECULARTEXTURE: number;
+        static SHADERDEFINE_TILINGOFFSET: number;
+        static shaderDefines: ShaderDefines;
+        /**
+         * @private
+         */
+        static __init__(): void;
+        /**
+         * 获取漫反射贴图。
+         * @return 漫反射贴图。
+         */
+        /**
+         * 设置漫反射贴图。
+         * @param value 漫反射贴图。
+         */
+        albedoTexture: BaseTexture;
+        /**
+         * 获取高光贴图。
+         * @return 高光贴图。
+         */
+        /**
+         * 设置高光贴图。
+         * @param value 高光贴图。
+         */
+        specularTexture: BaseTexture;
+        /**
+         * 获取阴影颜色。
+         * @return 阴影颜色。
+         */
+        /**
+         * 设置阴影颜色。
+         * @param value 阴影颜色。
+         */
+        shadowColor: Vector4;
+        /**
+         * 获取阴影范围。
+         * @return 阴影范围,范围为0到1。
+         */
+        /**
+         * 设置阴影范围。
+         * @param value 阴影范围,范围为0到1。
+         */
+        shadowRange: number;
+        /**
+         * 获取阴影强度。
+         * @return 阴影强度,范围为0到1。
+         */
+        /**
+         * 设置阴影强度。
+         * @param value 阴影强度,范围为0到1。
+         */
+        shadowIntensity: number;
+        /**
+         * 获取高光范围。
+         * @return 高光范围,范围为0.9到1。
+         */
+        /**
+         * 设置高光范围。
+         * @param value 高光范围,范围为0.9到1。
+         */
+        specularRange: number;
+        /**
+         * 获取高光强度。
+         * @return 高光强度,范围为0到1。
+         */
+        /**
+         * 设置高光强度。
+         * @param value 高光范围,范围为0到1。
+         */
+        specularIntensity: number;
+        /**
+         * 获取纹理平铺和偏移。
+         * @return 纹理平铺和偏移。
+         */
+        /**
+         * 设置纹理平铺和偏移。
+         * @param value 纹理平铺和偏移。
+         */
+        tilingOffset: Vector4;
+        static initShader(): void;
+        constructor();
+    }
+}
+declare module laya.d3.extension.cartoonRender {
+    import BaseMaterial = laya.d3.core.material.BaseMaterial;
+    import BaseTexture = laya.d3.resource.BaseTexture;
+    import ShaderDefines = laya.d3.shader.ShaderDefines;
+    /**
+     * ...
+     * @author ...
+     */
+    class OutlineMaterial extends BaseMaterial {
+        static OUTLINETEXTURE: number;
+        static OUTLINEWIDTH: number;
+        static OUTLINELIGHTNESS: number;
+        static SHADERDEFINE_OUTLINETEXTURE: number;
+        static shaderDefines: ShaderDefines;
+        /**
+         * @private
+         */
+        static __init__(): void;
+        /**
+         * 获取漫轮廓贴图。
+         * @return 轮廓贴图。
+         */
+        /**
+         * 设置轮廓贴图。
+         * @param value 轮廓贴图。
+         */
+        outlineTexture: BaseTexture;
+        /**
+         * 获取轮廓宽度。
+         * @return 轮廓宽度,范围为0到0.05。
+         */
+        /**
+         * 设置轮廓宽度。
+         * @param value 轮廓宽度,范围为0到0.05。
+         */
+        outlineWidth: number;
+        /**
+         * 获取轮廓亮度。
+         * @return 轮廓亮度,范围为0到1。
+         */
+        /**
+         * 设置轮廓亮度。
+         * @param value 轮廓亮度,范围为0到1。
+         */
+        outlineLightness: number;
+        static initShader(): void;
+        constructor();
     }
 }
 declare module laya.d3.graphics {
@@ -9137,7 +9743,9 @@ declare module laya.d3.graphics {
         static SIMULATIONWORLDPOSTION: number;
         static SIMULATIONWORLDROTATION: number;
         static TEXTURECOORDINATE0X: number;
+        static TEXTURECOORDINATE0X1: number;
         static TEXTURECOORDINATE0Y: number;
+        static OFFSETVECTOR: number;
     }
 }
 declare module laya.d3.graphics {
@@ -10214,8 +10822,8 @@ declare module laya.d3.math {
         static intersectsRayAndTriangleRP(ray: Ray, vertex1: Vector3, vertex2: Vector3, vertex3: Vector3, out: Vector3): boolean;
         /**
          * 空间中射线和点是否相交
-         * @param	sphere1 包围球1
-         * @param	sphere2 包围球2
+         * @param	ray   射线
+         * @param	point 点
          */
         static intersectsRayAndPoint(ray: Ray, point: Vector3): boolean;
         /**
@@ -10851,6 +11459,8 @@ declare module laya.d3.math {
          */
         containsSphere(sphere: BoundSphere, ignoreScale?: boolean): number;
         /**
+         *  For accuracy, The transformation matrix for both <see cref="OrientedBoundingBox"/> must not have any scaling applied to it.
+         *  Anyway, scaling using Scale method will keep this method accurate.
          * 该包围盒是否包含空间中另一OBB包围盒
          * @param	obb OBB包围盒
          * @return  返回位置关系
@@ -13281,7 +13891,7 @@ declare module laya.d3.terrain {
         /**
          * @private
          */
-        _renderUpdate(projectionView: Matrix4x4): void;
+        _renderUpdate(projectionView: Matrix4x4): boolean;
         /**
          * @private
          */
@@ -15008,6 +15618,31 @@ declare module laya.display {
          */
         fillTexture(tex: Texture, x: number, y: number, width?: number, height?: number, type?: string, offset?: Point): void;
         /**
+         * 填充一个圆形。这是一个临时函数，以后会删除，建议用户自己实现。
+         * @param	x
+         * @param	y
+         * @param	tex
+         * @param	cx		圆心位置。
+         * @param	cy
+         * @param	radius
+         * @param	segNum	分段数，越大越平滑。
+         */
+        fillCircle(x: number, y: number, tex: Texture, cx: number, cy: number, radius: number, segNum: number): void;
+        /**
+         * 绘制一组三角形
+         * @param texture	纹理。
+         * @param x			X轴偏移量。
+         * @param y			Y轴偏移量。
+         * @param vertices  顶点数组。
+         * @param indices	顶点索引。
+         * @param uvData	UV数据。
+         * @param matrix	缩放矩阵。
+         * @param alpha		alpha
+         * @param color		颜色变换
+         * @param blendMode	blend模式
+         */
+        drawTriangles(texture: Texture, x: number, y: number, vertices: Float32Array, uvs: Float32Array, indices: Uint16Array, matrix?: Matrix, alpha?: number, color?: string, blendMode?: string): void;
+        /**
          * @private
          * 保存到命令流。
          */
@@ -16621,6 +17256,8 @@ declare module laya.display {
          */
         strokeColor: string;
         protected isChanged: boolean;
+        protected _isPassWordMode(): boolean;
+        protected _getPassWordTxt(txt: string): string;
         protected renderText(begin: number, visibleLineCount: number): void;
         /**
          * <p>排版文本。</p>
@@ -16817,7 +17454,9 @@ declare module laya.events {
         /**退出触发器时触发。*/
         static TRIGGER_EXIT: string;
         /**拖尾渲染节点改变时触发。*/
-        static TRAIL_Filter_CHANGE: string;
+        static TRAIL_FILTER_CHANGE: string;
+        /**多米诺渲染节点改变时触发。*/
+        static DOMINO_FILTER_CHANGE: string;
         /** 事件类型。*/
         type: string;
         /** 原生浏览器事件。*/
@@ -18193,6 +18832,7 @@ declare module laya.map {
         mAniIdArray: Array<any>;
         mDurationTimeArray: Array<any>;
         mTileTexSetArr: Array<any>;
+        image: any;
     }
     class TileSet {
         firstgid: number;
@@ -19627,14 +20267,22 @@ declare module laya.net {
      * <p>调用 <code>enable</code> 启用资源版本管理。</p>
      */
     class ResourceVersion {
+        /**基于文件夹的资源管理方式（老版本IDE默认类型）*/
+        static FOLDER_VERSION: number;
+        /**基于文件名映射管理方式（新版本IDE默认类型）*/
+        static FILENAME_VERSION: number;
+        /**版本清单*/
         static manifest: any;
+        /**当前使用的版本管理类型*/
+        static type: number;
         /**
          * <p>启用资源版本管理。</p>
          * <p>由于只有发布版本需要资源管理。因此没有资源管理文件时，可以设置manifestFile为null或者不存在的路径。</p>
          * @param	manifestFile	清单（json）文件的路径。
          * @param   callback		清单（json）文件加载完成后执行。
+         * @param   type			FOLDER_VERSION为基于文件夹管理方式（老版本IDE默认类型），FILENAME_VERSION为基于文件名映射管理（新版本IDE默认类型
          */
-        static enable(manifestFile: string, callback: Handler): void;
+        static enable(manifestFile: string, callback: Handler, type?: number): void;
         /**
          * 为加载路径添加版本前缀。
          * @param	originURL	源路径。
@@ -19756,6 +20404,7 @@ declare module laya.net {
         constructor();
         fontName: string;
         complete: Handler;
+        err: Handler;
         load(fontPath: string): void;
     }
 }
@@ -20449,6 +21098,14 @@ declare module laya.renders {
         _fillRect: Function;
         drawCircle(x: number, y: number, radius: number, color: string, lineWidth?: number): void;
         _drawCircle: Function;
+        /**
+         * 绘制三角形
+         * @param	x
+         * @param	y
+         * @param	tex
+         * @param	args [x, y, texture,vertices,indices,uvs,matrix]
+         */
+        drawTriangles(x: number, y: number, args: Array<any>): void;
         fillCircle(x: number, y: number, radius: number, color: string): void;
         _fillCircle: Function;
         setShader(shader: any): void;
@@ -20625,6 +21282,7 @@ declare module laya.resource {
         drawTextureWithTransform(tex: Texture, x: number, y: number, width: number, height: number, m: Matrix, tx: number, ty: number, alpha: number): void;
         drawTexture2(x: number, y: number, pivotX: number, pivotY: number, m: Matrix, alpha: number, blendMode: string, args2: Array<any>): void;
         fillTexture(texture: Texture, x: number, y: number, width: number, height: number, type: string, offset: Point, other: any): void;
+        drawTriangle(texture: Texture, vertices: Float32Array, uvs: Float32Array, index0: number, index1: number, index2: number, matrix: Matrix, canvasPadding: boolean): void;
         flush(): number;
         fillWords(words: Array<any>, x: number, y: number, font: string, color: string, underLine: number): void;
         fillBorderWords(words: Array<any>, x: number, y: number, font: string, color: string, borderColor: string, lineWidth: number): void;
@@ -20677,7 +21335,7 @@ declare module laya.resource {
          * 根据指定的类型，创建一个 <code>HTMLCanvas</code> 实例。请不要直接使用 new HTMLCanvas！
          * @param	type 类型。2D、3D。
          */
-        constructor(type: string);
+        constructor(type: string, canvas?: any);
         /**
          * 清空画布内容。
          */
@@ -24466,7 +25124,7 @@ declare module laya.ui {
         protected _max: number;
         protected _min: number;
         protected _tick: number;
-        protected _value: number;
+ 
         protected _skin: string;
         protected _bg: Image;
         protected _progress: Image;
@@ -24516,7 +25174,11 @@ declare module laya.ui {
          * 滑动的刻度值，滑动数值为tick的整数倍。默认值为1。
          */
         tick: number;
-        protected changeValue(): void;
+        /**
+         * @private
+         * 改变滑块的位置值。
+         */
+        changeValue(): void;
         /**
          * 获取或设置表示最高位置的数字。 默认值为100。
          */
@@ -25544,6 +26206,7 @@ declare module laya.ui {
     }
 }
 declare module laya.ui {
+    import Event = laya.events.Event;
     import Box = laya.ui.Box;
     import Component = laya.ui.Component;
     /**
@@ -25556,11 +26219,13 @@ declare module laya.ui {
         /**UI类映射。*/
         static uiClassMap: any;
         protected static viewClassMap: any;
+        static eventDic: any;
         _idMap: any;
         _aniList: Array<any>;
         _watchMap: any;
         static _sheet: any;
         protected createView(uiView: any): void;
+        protected onEvent(type: string, event: Event): void;
         protected loadUI(path: string): void;
         /**
          * 根据UI数据实例化组件。
@@ -25829,6 +26494,8 @@ declare module laya.utils {
         static userAgent: string;
         /** 表示是否在 ios 设备。*/
         static onIOS: boolean;
+        /** 表示是否在 Mac 设备。*/
+        static onMac: boolean;
         /** 表示是否在移动设备。*/
         static onMobile: boolean;
         /** 表示是否在 iphone设备。*/
@@ -25856,6 +26523,7 @@ declare module laya.utils {
         /** 微信内*/
         static onWeiXin: boolean;
         static onMiniGame: boolean;
+        static onLimixiu: boolean;
         /** 表示是否在 PC 端。*/
         static onPC: boolean;
         /** 表示是否是 HTTP 协议。*/
@@ -27222,6 +27890,10 @@ declare module laya.utils {
         /**
          * 清空纹理函数。
          */
+        static cancelLoadByUrl: Function;
+        /**
+         * 清空纹理函数。
+         */
         static clearAtlas: Function;
         static isAtlas: Function;
         static addTextureToAtlas: Function;
@@ -28096,238 +28768,11 @@ declare module laya.webgl.canvas {
         recover(): void;
     }
 }
-declare module laya.webgl.canvas.save {
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    interface ISaveData {
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-    }
-}
-declare module laya.webgl.canvas.save {
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SaveBase implements ISaveData {
-        static TYPE_ALPHA: number;
-        static TYPE_FILESTYLE: number;
-        static TYPE_FONT: number;
-        static TYPE_LINEWIDTH: number;
-        static TYPE_STROKESTYLE: number;
-        static TYPE_MARK: number;
-        static TYPE_TRANSFORM: number;
-        static TYPE_TRANSLATE: number;
-        static TYPE_ENABLEMERGE: number;
-        static TYPE_TEXTBASELINE: number;
-        static TYPE_TEXTALIGN: number;
-        static TYPE_GLOBALCOMPOSITEOPERATION: number;
-        static TYPE_CLIPRECT: number;
-        static TYPE_CLIPRECT_STENCIL: number;
-        static TYPE_IBVB: number;
-        static TYPE_SHADER: number;
-        static TYPE_FILTERS: number;
-        static TYPE_FILTERS_TYPE: number;
-        static _createArray(): Array<any>;
-        static _init(): any;
-        constructor();
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-        static save(context: WebGLContext2D, type: number, dataObj: any, newSubmit: boolean): void;
-    }
-}
-declare module laya.webgl.canvas.save {
-    import Rectangle = laya.maths.Rectangle;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import SubmitScissor = laya.webgl.submit.SubmitScissor;
-    class SaveClipRect implements ISaveData {
-        _clipSaveRect: Rectangle;
-        _clipRect: Rectangle;
-        _submitScissor: SubmitScissor;
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-        static save(context: WebGLContext2D, submitScissor: SubmitScissor): void;
-    }
-}
-declare module laya.webgl.canvas.save {
-    import Matrix = laya.maths.Matrix;
-    import Rectangle = laya.maths.Rectangle;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import SubmitStencil = laya.webgl.submit.SubmitStencil;
-    class SaveClipRectStencil implements ISaveData {
-        _clipSaveRect: Rectangle;
-        _clipRect: Rectangle;
-        _rect: Rectangle;
-        _saveMatrix: Matrix;
-        _matrix: Matrix;
-        _contextX: number;
-        _contextY: number;
-        _submitStencil: SubmitStencil;
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-        static save(context: WebGLContext2D, submitStencil: SubmitStencil, x: number, y: number, width: number, height: number, clipX: number, clipY: number, clipWidth: number, clipHeight: number): void;
-    }
-}
-declare module laya.webgl.canvas.save {
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SaveMark implements ISaveData {
-        _saveuse: number;
-        _preSaveMark: SaveMark;
-        constructor();
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-        static Create(context: WebGLContext2D): SaveMark;
-    }
-}
-declare module laya.webgl.canvas.save {
-    import Matrix = laya.maths.Matrix;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SaveTransform implements ISaveData {
-        _savematrix: Matrix;
-        _matrix: Matrix;
-        constructor();
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-        static save(context: WebGLContext2D): void;
-    }
-}
-declare module laya.webgl.canvas.save {
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SaveTranslate implements ISaveData {
-        _x: number;
-        _y: number;
-        isSaveMark(): boolean;
-        restore(context: WebGLContext2D): void;
-        static save(context: WebGLContext2D): void;
-    }
-}
-declare module laya.webgl.canvas {
-    import Sprite = laya.display.Sprite;
-    import Matrix = laya.maths.Matrix;
-    import Point = laya.maths.Point;
-    import Rectangle = laya.maths.Rectangle;
-    import Context = laya.resource.Context;
-    import HTMLCanvas = laya.resource.HTMLCanvas;
-    import Texture = laya.resource.Texture;
-    import SaveMark = laya.webgl.canvas.save.SaveMark;
-    import RenderTargetMAX = laya.webgl.resource.RenderTargetMAX;
-    import Shader = laya.webgl.shader.Shader;
-    import Shader2D = laya.webgl.shader.d2.Shader2D;
-    import Value2D = laya.webgl.shader.d2.value.Value2D;
-    import ISubmit = laya.webgl.submit.ISubmit;
-    import FontInContext = laya.webgl.text.FontInContext;
-    import IndexBuffer2D = laya.webgl.utils.IndexBuffer2D;
-    import VertexBuffer2D = laya.webgl.utils.VertexBuffer2D;
-    class WebGLContext2D extends Context {
-        static _tempPoint: Point;
-        static _SUBMITVBSIZE: number;
-        static _MAXSIZE: number;
-        static _RECTVBSIZE: number;
-        static MAXCLIPRECT: Rectangle;
-        static _COUNT: number;
-        static _tmpMatrix: Matrix;
-        static __init__(): void;
-        _x: number;
-        _y: number;
-        _id: number;
-        _submits: any;
-        _curSubmit: any;
-        _ib: IndexBuffer2D;
-        _vb: VertexBuffer2D;
-        _clipRect: Rectangle;
-        _curMat: Matrix;
-        _nBlendType: number;
-        _save: any;
-        _targets: RenderTargetMAX;
-        _renderKey: number;
-        _saveMark: SaveMark;
-        _shader2D: Shader2D;
-        /**所cacheAs精灵*/
-        sprite: Sprite;
-        constructor(c: HTMLCanvas);
-        setIsMainContext(): void;
-        clearBG(r: number, g: number, b: number, a: number): void;
-        _getSubmits(): Array<any>;
-        destroy(): void;
-        clear(): void;
-        size(w: number, h: number): void;
-        asBitmap: boolean;
-        _getTransformMatrix(): Matrix;
-        fillStyle: any;
-        globalAlpha: number;
-        textAlign: string;
-        textBaseline: string;
-        globalCompositeOperation: string;
-        strokeStyle: any;
-        translate(x: number, y: number): void;
-        lineWidth: number;
-        save(): void;
-        restore(): void;
-        font: string;
-        fillWords(words: Array<any>, x: number, y: number, fontStr: string, color: string, underLine: number): void;
-        fillBorderWords(words: Array<any>, x: number, y: number, font: string, color: string, borderColor: string, lineWidth: number): void;
-        fillText(txt: any, x: number, y: number, fontStr: string, color: string, textAlign: string): void;
-        strokeText(txt: any, x: number, y: number, fontStr: string, color: string, lineWidth: number, textAlign: string): void;
-        fillBorderText(txt: any, x: number, y: number, fontStr: string, fillColor: string, borderColor: string, lineWidth: number, textAlign: string): void;
-        fillRect(x: number, y: number, width: number, height: number, fillStyle: any): void;
-        fillTexture(texture: Texture, x: number, y: number, width: number, height: number, type: string, offset: Point, other: any): void;
-        setShader(shader: Shader): void;
-        setFilters(value: Array<any>): void;
-        drawTexture(tex: Texture, x: number, y: number, width: number, height: number, tx: number, ty: number): void;
-        addTextureVb(invb: Array<any>, x: number, y: number): void;
-        willDrawTexture(tex: Texture, alpha: number): number;
-        drawTextures(tex: Texture, pos: Array<any>, tx: number, ty: number): void;
-        _drawText(tex: Texture, x: number, y: number, width: number, height: number, m: Matrix, tx: number, ty: number, dx: number, dy: number): void;
-        drawTextureWithTransform(tex: Texture, x: number, y: number, width: number, height: number, transform: Matrix, tx: number, ty: number, alpha: number): void;
-        fillQuadrangle(tex: Texture, x: number, y: number, point4: Array<any>, m: Matrix): void;
-        drawTexture2(x: number, y: number, pivotX: number, pivotY: number, transform: Matrix, alpha: number, blendMode: string, args: Array<any>): void;
-        drawCanvas(canvas: HTMLCanvas, x: number, y: number, width: number, height: number): void;
-        drawTarget(scope: any, x: number, y: number, width: number, height: number, m: Matrix, proName: string, shaderValue: Value2D, uv?: Array<any>, blend?: number): void;
-        transform(a: number, b: number, c: number, d: number, tx: number, ty: number): void;
-        setTransformByMatrix(value: Matrix): void;
-        transformByMatrix(value: Matrix): void;
-        rotate(angle: number): void;
-        scale(scaleX: number, scaleY: number): void;
-        clipRect(x: number, y: number, width: number, height: number): void;
-        setIBVB(x: number, y: number, ib: IndexBuffer2D, vb: VertexBuffer2D, numElement: number, mat: Matrix, shader: Shader, shaderValues: Value2D, startIndex?: number, offset?: number, type?: number): void;
-        addRenderObject(o: ISubmit): void;
-        fillTrangles(tex: Texture, x: number, y: number, points: Array<any>, m: Matrix): void;
-        submitElement(start: number, end: number): void;
-        finish(): void;
-        flush(): number;
-        setPathId(id: number): void;
-        movePath(x: number, y: number): void;
-        beginPath(): void;
-        closePath(): void;
-        fill(isConvexPolygon?: boolean): void;
-        stroke(): void;
-        line(fromX: number, fromY: number, toX: number, toY: number, lineWidth: number, mat: Matrix): void;
-        moveTo(x: number, y: number, b?: boolean): void;
-        lineTo(x: number, y: number, b?: boolean): void;
-        drawCurves(x: number, y: number, args: Array<any>): void;
-        arcTo(x1: number, y1: number, x2: number, y2: number, r: number): void;
-        arc(cx: number, cy: number, r: number, startAngle: number, endAngle: number, counterclockwise?: boolean, b?: boolean): void;
-        quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
-        rect(x: number, y: number, width: number, height: number): void;
-        strokeRect(x: number, y: number, width: number, height: number, parameterLineWidth: number): void;
-        clip(): void;
-        /**
-         * 画多边形(用)
-         * @param	x
-         * @param	y
-         * @param	points
-         */
-        drawPoly(x: number, y: number, points: Array<any>, color: number, lineWidth: number, boderColor: number, isConvexPolygon?: boolean): void;
-        /*******************************************end矢量绘制***************************************************/
-        drawParticle(x: number, y: number, pt: any): void;
-    }
-    class ContextParams {
-        static DEFAULT: ContextParams;
-        lineWidth: number;
-        path: any;
-        textAlign: string;
-        textBaseline: string;
-        font: FontInContext;
-        clear(): void;
-        make(): ContextParams;
-    }
-}
+
+
+
+
+
 declare module laya.webgl.display {
     import Graphics = laya.display.Graphics;
     import Shader = laya.webgl.shader.Shader;
@@ -28344,78 +28789,30 @@ declare module laya.webgl.resource {
         clearAtlasSource(): void;
     }
 }
-declare module laya.webgl.resource {
-    import IDispose = laya.resource.IDispose;
-    import Texture = laya.resource.Texture;
-    class RenderTarget2D extends Texture implements IDispose {
-        static TYPE2D: number;
-        static TYPE3D: number;
-        _destroy: boolean;
-        readonly surfaceFormat: number;
-        readonly surfaceType: number;
-        readonly depthStencilFormat: number;
-        readonly mipMap: boolean;
-        readonly minFifter: number;
-        readonly magFifter: number;
-        /**返回RenderTarget的Texture*/
-        readonly source: any;
-        /**
-         * @param width
-         * @param height
-         * @param mimMap
-         * @param surfaceFormat RGB ,R,RGBA......
-         * @param surfaceType    WebGLContext.UNSIGNED_BYTE  数据类型
-         * @param depthFormat WebGLContext.DEPTH_COMPONENT16 数据类型等
-         * **/
-        constructor(width: number, height: number, surfaceFormat?: number, surfaceType?: number, depthStencilFormat?: number, mipMap?: boolean, repeat?: boolean, minFifter?: number, magFifter?: number);
-        getType(): number;
-        getTexture(): Texture;
-        size(w: number, h: number): void;
-        release(): void;
-        recycle(): void;
-        // static create(w: number, h: number, surfaceFormat?: number, surfaceType?: number, depthStencilFormat?: number, mipMap?: boolean, repeat?: boolean, minFifter?: number, magFifter?: number): RenderTarget2D;
-        start(): RenderTarget2D;
-        clear(r?: number, g?: number, b?: number, a?: number): void;
-        end(): void;
-        getData(x: number, y: number, width: number, height: number): Uint8Array;
-        /**彻底清理资源,注意会强制解锁清理*/
-        destroy(foreDiposeTexture?: boolean): void;
-        dispose(): void;
-    }
-}
-declare module laya.webgl.resource {
-    import Sprite = laya.display.Sprite;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class RenderTargetMAX {
-        target: RenderTarget2D;
-        repaint: boolean;
-        _width: number;
-        _height: number;
-        constructor();
-        setSP(sp: Sprite): void;
-        size(w: number, h: number): void;
-        flush(context: WebGLContext2D): void;
-        drawTo(context: WebGLContext2D, x: number, y: number, width: number, height: number): void;
-        destroy(): void;
-    }
-}
+
+
 declare module laya.webgl.resource {
     import Bitmap = laya.resource.Bitmap;
     import Context = laya.resource.Context;
     class WebGLCanvas extends Bitmap {
         static _createContext: Function;
+        flipY: boolean;
+        premulAlpha: boolean;
         /**HTML Canvas*/
         _canvas: any;
         _imgData: any;
         iscpuSource: boolean;
+        alwaysChange: boolean;
         getCanvas(): any;
         clear(): void;
         destroy(): void;
         readonly context: Context;
         _setContext(context: Context): void;
         getContext(contextID: string, other?: any): Context;
+        readonly source: any;
         size(w: number, h: number): void;
         asBitmap: boolean;
+        activeResource(force?: boolean): void;
         protected recreateResource(): void;
         protected disposeResource(): void;
         texSubImage2D(webglCanvas: WebGLCanvas, xoffset: number, yoffset: number): void;
@@ -29054,61 +29451,8 @@ declare module laya.webgl.submit {
         releaseRender(): void;
     }
 }
-declare module laya.webgl.submit {
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import Value2D = laya.webgl.shader.d2.value.Value2D;
-    import ISubmit = laya.webgl.submit.ISubmit;
-    import IndexBuffer2D = laya.webgl.utils.IndexBuffer2D;
-    import VertexBuffer2D = laya.webgl.utils.VertexBuffer2D;
-    class Submit implements ISubmit {
-        static TYPE_2D: number;
-        static TYPE_CANVAS: number;
-        static TYPE_CMDSETRT: number;
-        static TYPE_CUSTOM: number;
-        static TYPE_BLURRT: number;
-        static TYPE_CMDDESTORYPRERT: number;
-        static TYPE_DISABLESTENCIL: number;
-        static TYPE_OTHERIBVB: number;
-        static TYPE_PRIMITIVE: number;
-        static TYPE_RT: number;
-        static TYPE_BLUR_RT: number;
-        static TYPE_TARGET: number;
-        static TYPE_CHANGE_VALUE: number;
-        static TYPE_SHAPE: number;
-        static TYPE_TEXTURE: number;
-        static TYPE_FILLTEXTURE: number;
-        static RENDERBASE: Submit;
-        protected _selfVb: VertexBuffer2D;
-        protected _ib: IndexBuffer2D;
-        protected _blendFn: Function;
-        _renderType: number;
-        _vb: VertexBuffer2D;
-        _startIdx: number;
-        _numEle: number;
-        shaderValue: Value2D;
-        static __init__(): void;
-        constructor(renderType?: number);
-        releaseRender(): void;
-        getRenderType(): number;
-        renderSubmit(): number;
-        static createSubmit(context: WebGLContext2D, ib: IndexBuffer2D, vb: VertexBuffer2D, pos: number, sv: Value2D): Submit;
-        static createShape(ctx: WebGLContext2D, ib: IndexBuffer2D, vb: VertexBuffer2D, numEle: number, offset: number, sv: Value2D): Submit;
-    }
-}
-declare module laya.webgl.submit {
-    import Matrix = laya.maths.Matrix;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SubmitCanvas extends Submit {
-        static create(ctx_src: WebGLContext2D, alpha: number, filters: Array<any>): SubmitCanvas;
-        _matrix: Matrix;
-        _ctx_src: WebGLContext2D;
-        _matrix4: Array<any>;
-        constructor();
-        renderSubmit(): number;
-        releaseRender(): void;
-        getRenderType(): number;
-    }
-}
+
+
 declare module laya.webgl.submit {
     import ISubmit = laya.webgl.submit.ISubmit;
     class SubmitCMD implements ISubmit {
@@ -29133,111 +29477,11 @@ declare module laya.webgl.submit {
         static create(): SubmitCMDScope;
     }
 }
-declare module laya.webgl.submit {
-    import Matrix = laya.maths.Matrix;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import Shader = laya.webgl.shader.Shader;
-    import Value2D = laya.webgl.shader.d2.value.Value2D;
-    import ISubmit = laya.webgl.submit.ISubmit;
-    import IndexBuffer2D = laya.webgl.utils.IndexBuffer2D;
-    import VertexBuffer2D = laya.webgl.utils.VertexBuffer2D;
-    class SubmitOtherIBVB implements ISubmit {
-        static create(context: WebGLContext2D, vb: VertexBuffer2D, ib: IndexBuffer2D, numElement: number, shader: Shader, shaderValue: Value2D, startIndex: number, offset: number, type?: number): SubmitOtherIBVB;
-        protected offset: number;
-        protected _vb: VertexBuffer2D;
-        protected _ib: IndexBuffer2D;
-        protected _blendFn: Function;
-        _mat: Matrix;
-        _shader: Shader;
-        _shaderValue: Value2D;
-        _numEle: number;
-        startIndex: number;
-        constructor();
-        releaseRender(): void;
-        getRenderType(): number;
-        renderSubmit(): number;
-    }
-}
-declare module laya.webgl.submit {
-    import Rectangle = laya.maths.Rectangle;
-    import ISubmit = laya.webgl.submit.ISubmit;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SubmitScissor implements ISubmit {
-        static _cache: Array<any>;
-        clipRect: Rectangle;
-        screenRect: Rectangle;
-        submitIndex: number;
-        submitLength: number;
-        context: WebGLContext2D;
-        constructor();
-        renderSubmit(): number;
-        getRenderType(): number;
-        releaseRender(): void;
-        static create(context: WebGLContext2D): SubmitScissor;
-    }
-}
-declare module laya.webgl.submit {
-    import Matrix = laya.maths.Matrix;
-    import Rectangle = laya.maths.Rectangle;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    class SubmitStencil implements ISubmit {
-        static _cache: Array<any>;
-        step: number;
-        blendMode: string;
-        constructor();
-        renderSubmit(): number;
-        getRenderType(): number;
-        releaseRender(): void;
-        static restore(context: WebGLContext2D, clip: Rectangle, m: Matrix, _x: number, _y: number): void;
-        static restore2(context: WebGLContext2D, submit: Submit): void;
-        static create(step: number): SubmitStencil;
-    }
-}
-declare module laya.webgl.submit {
-    import ISubmit = laya.webgl.submit.ISubmit;
-    import IndexBuffer2D = laya.webgl.utils.IndexBuffer2D;
-    import VertexBuffer2D = laya.webgl.utils.VertexBuffer2D;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import Value2D = laya.webgl.shader.d2.value.Value2D;
-    class SubmitTarget implements ISubmit {
-        protected _renderType: number;
-        protected _vb: VertexBuffer2D;
-        protected _ib: IndexBuffer2D;
-        _startIdx: number;
-        _numEle: number;
-        shaderValue: Value2D;
-        blendType: number;
-        proName: string;
-        scope: SubmitCMDScope;
-        constructor();
-        static _cache: Array<any>;
-        renderSubmit(): number;
-        blend(): void;
-        getRenderType(): number;
-        releaseRender(): void;
-        static create(context: WebGLContext2D, ib: IndexBuffer2D, vb: VertexBuffer2D, pos: number, sv: Value2D, proName: string): SubmitTarget;
-    }
-}
-declare module laya.webgl.submit {
-    import Texture = laya.resource.Texture;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import Value2D = laya.webgl.shader.d2.value.Value2D;
-    import IndexBuffer2D = laya.webgl.utils.IndexBuffer2D;
-    import VertexBuffer2D = laya.webgl.utils.VertexBuffer2D;
-    class SubmitTexture extends Submit {
-        protected _texs: Array<any>;
-        protected _texsID: Array<any>;
-        protected _vbPos: Array<any>;
-        _preIsSameTextureShader: boolean;
-        _isSameTexture: boolean;
-        constructor(renderType?: number);
-        releaseRender(): void;
-        addTexture(tex: Texture, vbpos: number): void;
-        checkTexture(): void;
-        renderSubmit(): number;
-        static create(context: WebGLContext2D, ib: IndexBuffer2D, vb: VertexBuffer2D, pos: number, sv: Value2D): SubmitTexture;
-    }
-}
+
+
+
+
+
 declare module laya.webgl.text {
     /**
      * ...特殊的字符，如泰文，必须重新实现这个类
@@ -29250,35 +29494,7 @@ declare module laya.webgl.text {
         length(): number;
     }
 }
-declare module laya.webgl.text {
-    import Matrix = laya.maths.Matrix;
-    import WebGLContext2D = laya.webgl.canvas.WebGLContext2D;
-    import WebGLCharImage = laya.webgl.resource.WebGLCharImage;
-    class DrawText {
-        static _drawValue: CharValue;
-        static d: Array<any>;
-        static __init__(): void;
-        /**
-         * 项目层根据当前的语言特性，设置自己的分词器，如泰语需要特殊的处理
-         * @param	charseg
-         */
-        static customCharSeg(charseg: ICharSegment): void;
-        static getChar(char: string, id: number, drawValue: CharValue): WebGLCharImage;
-        static drawText(ctx: WebGLContext2D, txt: any, words: Array<any>, curMat: Matrix, font: FontInContext, textAlign: string, fillColor: string, borderColor: string, lineWidth: number, x: number, y: number, underLine?: number): void;
-    }
-    class CharValue {
-        txtID: number;
-        font: any;
-        fillColor: string;
-        borderColor: string;
-        lineWidth: number;
-        scaleX: number;
-        scaleY: number;
-        underLine: number;
-        value(font: any, fillColor: string, borderColor: string, lineWidth: number, scaleX: number, scaleY: number, underLine: number): CharValue;
-        static clear(): void;
-    }
-}
+
 declare module laya.webgl.text {
     class FontInContext {
         static EMPTY: FontInContext;
@@ -29332,6 +29548,12 @@ declare module laya.webgl.utils {
         protected _uploadSize: number;
         readonly bufferLength: number;
         byteLength: number;
+        /**
+         * 在当前的基础上需要多大空间，单位是byte
+         * @param	sz
+         * @return  增加大小之前的写位置。单位是byte
+         */
+        needSize(sz: number): number;
         constructor();
         protected _bufferData(): void;
         protected _bufferSubData(offset?: number, dataStart?: number, dataLength?: number): void;
@@ -29340,6 +29562,12 @@ declare module laya.webgl.utils {
         _bind_subUpload(offset?: number, dataStart?: number, dataLength?: number): boolean;
         _resizeBuffer(nsz: number, copy: boolean): Buffer2D;
         append(data: any): void;
+        /**
+         * 附加Uint16Array的数据。数据长度是len。byte的话要*2
+         * @param	data
+         * @param	len
+         */
+        appendU16Array(data: Uint16Array, len: number): void;
         appendEx(data: any, type: any): void;
         appendEx2(data: any, type: any, dataLen: number, perDataLen?: number): void;
         getBuffer(): ArrayBuffer;
@@ -29413,6 +29641,76 @@ declare module laya.webgl.utils {
     }
 }
 declare module laya.webgl.utils {
+    /**
+     * Mesh2d只是保存数据。描述attribute用的。本身不具有渲染功能。
+     */
+    class Mesh2D {
+        _stride: number;
+        vertNum: number;
+        indexNum: number;
+        protected _applied: boolean;
+        protected _vb: VertexBuffer2D;
+        protected _ib: IndexBuffer2D;
+        protected _quadNum: number;
+        canReuse: boolean;
+        /**
+         *
+         * @param	stride
+         * @param	vballoc  vb预分配的大小。主要是用来提高效率。防止不断的resizebfufer
+         * @param	iballoc
+         */
+        constructor(stride: number, vballoc: number, iballoc: number);
+        /**
+         * 重新创建一个mesh。复用这个对象的vertex结构，ib对象和attribinfo对象
+         */
+        cloneWithNewVB(): Mesh2D;
+        /**
+         * 创建一个mesh，使用当前对象的vertex结构。vb和ib自己提供。
+         * @return
+         */
+        cloneWithNewVBIB(): Mesh2D;
+        /**
+         * 获得一个可以写的vb对象
+         */
+        getVBW(): VertexBuffer2D;
+        /**
+         * 获得一个只读vb
+         */
+        getVBR(): VertexBuffer2D;
+        getIBR(): IndexBuffer2D;
+        /**
+         * 获得一个可写的ib
+         */
+        getIBW(): IndexBuffer2D;
+        /**
+         * 直接创建一个固定的ib。按照固定四边形的索引。
+         * @param	var QuadNum
+         */
+        createQuadIB(QuadNum: number): void;
+        /**
+         * 设置mesh的属性。每3个一组，对应的location分别是0,1,2...
+         * 含义是：type,size,offset
+         * 不允许多流。因此stride是固定的，offset只是在一个vertex之内。
+         * @param	attribs
+         */
+        setAttributes(attribs: Array<any>): void;
+        getEleNum(): number;
+        /**
+         * 子类实现。用来把自己放到对应的回收池中，以便复用。
+         */
+        releaseMesh(): void;
+        /**
+         * 释放资源。
+         */
+        destroy(): void;
+        /**
+         * 清理vb数据
+         */
+        clearVB(): void;
+    }
+}
+
+declare module laya.webgl.utils {
     import Sprite = laya.display.Sprite;
     import RenderContext = laya.renders.RenderContext;
     import RenderSprite = laya.renders.RenderSprite;
@@ -29429,31 +29727,7 @@ declare module laya.webgl.utils {
         _transform(sprite: Sprite, context: RenderContext, x: number, y: number): void;
     }
 }
-declare module laya.webgl.utils {
-    import Matrix = laya.maths.Matrix;
-    import Rectangle = laya.maths.Rectangle;
-    import RenderTarget2D = laya.webgl.resource.RenderTarget2D;
-    import ShaderDefines2D = laya.webgl.shader.d2.ShaderDefines2D;
-    class RenderState2D {
-        static _MAXSIZE: number;
-        static EMPTYMAT4_ARRAY: Array<any>;
-        static TEMPMAT4_ARRAY: Array<any>;
-        static worldMatrix4: Array<any>;
-        static worldMatrix: Matrix;
-        static worldAlpha: number;
-        static worldScissorTest: boolean;
-        static worldFilters: Array<any>;
-        static worldShaderDefines: ShaderDefines2D;
-        static worldClipRect: Rectangle;
-        static curRenderTarget: RenderTarget2D;
-        static width: number;
-        static height: number;
-        static getMatrArray(): Array<any>;
-        static mat2MatArray(mat: Matrix, matArray: Array<any>): Array<any>;
-        static restoreTempArray(): void;
-        static clear(): void;
-    }
-}
+
 declare module laya.webgl.utils {
     import Shader = laya.webgl.shader.Shader;
     /**
@@ -30012,6 +30286,435 @@ declare module laya.webgl {
         compressedTexImage2D(...args: any[]): void;
     }
 }
+declare module laya.wx.mini {
+    import EventDispatcher = laya.events.EventDispatcher;
+    /**
+     * ...
+     * @author ww
+     */
+    class MiniAccelerator extends EventDispatcher {
+        constructor();
+        static __init__(): void;
+        static startListen(callBack: Function): void;
+        static stopListen(): void;
+        /**
+         * 侦听加速器运动。
+         * @param observer	回调函数接受4个参数，见类说明。
+         */
+        on(type: string, caller: any, listener: Function, args?: Array<any>): EventDispatcher;
+        /**
+         * 取消侦听加速器。
+         * @param	handle	侦听加速器所用处理器。
+         */
+        off(type: string, caller: any, listener: Function, onceOnly?: boolean): EventDispatcher;
+    }
+}
+
+declare module laya.wx.mini {
+    import Handler = laya.utils.Handler;
+
+    
+    class MiniAdpter {
+         
+
+
+        /**是否自动缓存下载的图片跟声音文件，默认为true**/
+        public static  autoCacheFile:Boolean;
+		/**50M缓存容量满时每次清理容量值,默认每次清理5M**/
+		public static  minClearSize:Number; 
+		/**本地资源列表**/
+		public static  nativefiles:Object;
+         
+
+        /**
+         * 初始化回调
+         * @param isPostMsg 是否需要在主域中自动将加载的文本数据自动传递到子域，默认 false
+         * @param isSon 是否是子域，默认为false
+         * @param isCacheFile 是否缓存下载的图片跟声音文件，默认true缓存
+         */
+        static init(isPosMsg?: boolean, isSon?: boolean, isCacheFile?: boolean): void;
+      
+      /**
+       * 判断文件是否在4M包
+       * @param url 文件路径
+       * @return 
+       */
+      
+        static hasNativeFile(fileUrl:String):Boolean;
+        
+       
+
+        /**
+       * 通过url地址获取文件编码(编码的设置只有在直接调用本地读取4M包非图片文件的时候才需要指定，50M空间文件加载无需设置文件编码) 
+       * @param url 文件路径(绝对地址)
+       * @param type 文件类型
+       * @return 
+       */		
+        static getUrlEncode(url:String,type:String):String;
+
+        /**
+         * 下载文件
+         * @param url 文件路径（绝对地址）
+         * @param type 文件类型
+         * @param callBack 文件加载回调，回调内容[errorCode码(0成功,1失败,2加载进度)
+         * @param encoding 文件编码默认 ascill，非图片文件加载需要设置相应的编码，二进制编码为空字符串
+
+         */
+        static downLoadFile(fileUrl: string, fileType?: string, callBack?: Handler, encoding?: string): void;
+        
+       /**
+        * 删除指定缓存文件
+        * @param fileUrl文件路径(绝对地址)
+        * @param callBack 删除回调函数
+        */
+
+        static remove(fileUrl?:String,callBack?:Handler): void;
+        
+        /**
+         * 
+         * 获取文件信息
+         * @param fileUrl
+         * @return
+         */
+        static getFileInfo(fileUrl: string):Object;
+        
+        /**
+         * 获取文件列表
+         */
+        static getFileList():Object;
+     
+    }
+}
+declare module laya.wx.mini {
+    import EventDispatcher = laya.events.EventDispatcher;
+    import Handler = laya.utils.Handler;
+    class MiniFileMgr extends EventDispatcher {
+        /**文件缓存列表**/
+        static filesListObj: any;
+        /**文件磁盘路径**/
+        static fileNativeDir: string;
+        /**存储在磁盘的文件列表名称**/
+        static fileListName: string;
+        /**子域数据存储对象**/
+        static ziyuFileData: any;
+        /**加载路径设定(相当于URL.rootPath)**/
+        static loadPath: string;
+        /**本地资源列表**/
+        static loadNativeFile: Array<any>;
+        static DESCENDING: number;
+        static NUMERIC: number;
+        /**
+         * 是否是本地4M包文件
+         * @param url
+         * @return
+         */
+        static isLocalNativeFile(url: string): boolean;
+        /**
+         * 判断缓存里是否存在文件
+         * @param fileUrl
+         * @return
+         */
+        static getFileInfo(fileUrl: string): any;
+        /**
+         * 本地读取
+         * @param nativeFileUrl 文件磁盘路径
+         * @param encoding 文件读取的编码格式
+         * @param callBack 回调处理
+         * @param readyUrl 文件请求加载地址
+         * @param isSaveFile 是否自动缓存下载的文件,只有在开发者自己单独加载时生效
+         * @param fileType 文件类型
+         */
+        static read(filePath: string, encoding?: string, callBack?: Handler, readyUrl?: string, isSaveFile?: boolean, fileType?: string): void;
+        /**
+         * 下载远端文件(非图片跟声音文件)
+         * @param fileUrl  文件远端下载地址
+         * @param encode 文件编码
+         * @param callBack 完成回调
+         * @param readyUrl 文件真实下载地址
+         * @param isSaveFile 是否自动缓存下载的文件,只有在开发者自己单独加载时生效
+         * @param fileType 文件类型
+         */
+        static downFiles(fileUrl: string, encoding?: string, callBack?: Handler, readyUrl?: string, isSaveFile?: boolean, fileType?: string): void;
+        /**
+         * 本地本地磁盘文件读取
+         * @param nativeFileUrl 文件磁盘临时地址
+         * @param encoding 文件设定读取的编码格式
+         * @param callBack 完成回调
+         * @param readyUrl 真实的下载地址
+         * @param isSaveFile 是否自动缓存下载的文件,只有在开发者自己单独加载时生效
+         * @param fileType 文件类型
+         */
+        static readFile(filePath: string, encoding?: string, callBack?: Handler, readyUrl?: string, isSaveFile?: boolean, fileType?: string): void;
+        /**
+         * 下载远端文件(图片跟声音文件)
+         * @param fileUrl  文件远端下载地址
+         * @param encode 文件编码
+         * @param callBack 完成回调
+         * @param readyUrl 文件真实下载地址
+         * @param isSaveFile 是否自动缓存下载的文件,只有在开发者自己单独加载时生效
+         */
+        static downOtherFiles(fileUrl: string, callBack?: Handler, readyUrl?: string, isSaveFile?: boolean): void;
+        /**
+         * 下载文件
+         * @param fileUrl 文件远端地址
+         * @param fileType 文件类型(image、text、json、xml、arraybuffer、sound、atlas、font)
+         * @param callBack 文件加载回调,回调内容[errorCode码(0成功,1失败,2加载进度)
+         * @param encoding 文件编码默认 ascill，非图片文件加载需要设置相应的编码，二进制编码为空字符串
+         */
+        static downLoadFile(fileUrl: string, fileType?: string, callBack?: Handler, encoding?: string): void;
+        /**
+         * 数组排序
+         * @param array
+         * @param name
+         * @param options
+         * @return
+         */
+        static sortOn(array: Array<any>, name: any, options?: number): Array<any>;
+        /**
+         * 获取文件磁盘的路径(md5)
+         * @param fileName
+         * @return
+         */
+        static getFileNativePath(fileName: string): string;
+        /**
+         * 从本地删除文件
+         * @param tempFileName 文件临时地址 ,为空字符串时就会从文件列表删除
+         * @param readyUrl 文件真实下载地址
+         * @param callBack 回调处理，在存储图片时用到
+         * @param encoding  文件编码
+         * @param fileSize 文件大小
+         */
+        static remove(tempFileName: string, readyUrl?: string, callBack?: Handler, encoding?: string, fileSize?: number): void;
+        /**
+         * 存储更新文件列表
+         * @param readyUrl
+         * @param md5Name
+         * @param isAdd
+         * @param encoding
+         * @param callBack
+         * @param fileSize 文件大小
+         */
+        static onSaveFile(readyUrl: string, md5Name: string, isAdd?: boolean, encoding?: string, callBack?: Handler, fileSize?: number): void;
+        /**
+         *获取当前缓存使用的空间大小(字节数，除以1024 再除以1024可以换算成M)
+         * @return
+         */
+        static getCacheUseSize(): number;
+        /**
+         * 判断资源目录是否存在
+         * @param dirPath 磁盘设定路径
+         * @param callBack 回调处理
+         */
+        static existDir(dirPath: string, callBack: Handler): void;
+        /**
+         * 本地读取
+         * @param nativeFileUrl 文件磁盘路径
+         * @param encoding 文件读取的编码格式
+         * @param callBack 回调处理
+         * @param readyUrl 文件请求加载地址
+         */
+        static readSync(filePath: string, encoding?: string, callBack?: Handler, readyUrl?: string): void;
+        /**
+         * 设置磁盘文件存储路径
+         * @param value 磁盘路径
+         * @return
+         */
+        static setNativeFileDir(value: string): void;
+    }
+}
+declare module laya.wx.mini {
+    class MiniImage {
+        protected _loadImage(url: string): void;
+    }
+}
+declare module laya.wx.mini {
+    class MiniInput {
+        constructor();
+        static wxinputFocus(e: any): void;
+        static inputEnter(): void;
+        static wxinputblur(): void;
+        static hideKeyboard(): void;
+    }
+}
+declare module laya.wx.mini {
+    import EventDispatcher = laya.events.EventDispatcher;
+    class MiniLoader extends EventDispatcher {
+        constructor();
+        /**
+         * 获取url跟encoding值
+         * @param url 文件路径
+         * @param type 文件类型
+         * @return
+         */
+        static getUrlAndEncode: Function;
+    }
+}
+declare module laya.wx.mini {
+    /**
+     * 本地数据存储的大小限制为 10MB
+     * @author xiaosong
+     */
+    class MiniLocalStorage {
+        /**
+         * 表示是否支持  <code>LocalStorage</code>。
+         */
+        static support: boolean;
+        /**
+         *  数据列表。
+         */
+        static items: any;
+        constructor();
+        static __init__(): void;
+        /**
+         * 存储指定键名和键值，字符串类型。
+         * @param key 键名。
+         * @param value 键值。
+         */
+        static setItem(key: string, value: any): void;
+        /**
+         * 获取指定键名的值。
+         * @param key 键名。
+         * @return 字符串型值。
+         */
+        static getItem(key: string): string;
+        /**
+         * 存储指定键名及其对应的 <code>Object</code> 类型值。
+         * @param key 键名。
+         * @param value 键值。是 <code>Object</code> 类型，此致会被转化为 JSON 字符串存储。
+         */
+        static setJSON(key: string, value: any): void;
+        /**
+         * 获取指定键名对应的 <code>Object</code> 类型值。
+         * @param key 键名。
+         * @return <code>Object</code> 类型值
+         */
+        static getJSON(key: string): any;
+        /**
+         * 删除指定键名的信息。
+         * @param key 键名。
+         */
+        static removeItem(key: string): void;
+        /**
+         * 清除本地存储信息。
+         */
+        static clear(): void;
+        /**同步获取当前storage的相关信息**/
+        static getStorageInfoSync(): any;
+    }
+}
+declare module laya.wx.mini {
+    /**
+     * ...
+     * @author ww
+     */
+    class MiniLocation {
+        constructor();
+        static __init__(): void;
+        static getCurrentPosition(success?: Function, error?: Function, options?: any): void;
+        static watchPosition(success?: Function, error?: Function, options?: any): number;
+        static clearWatch(id: number): void;
+    }
+}
+declare module laya.wx.mini {
+    import EventDispatcher = laya.events.EventDispatcher;
+    class MiniSound extends EventDispatcher {
+        _sound: any;
+        /**
+         * 声音URL
+         */
+        url: string;
+        /**
+         * 是否已加载完成
+         */
+        loaded: boolean;
+        readyUrl: string;
+        constructor();
+        /**
+         * 加载声音。
+         * @param url 地址。
+         *
+         */
+        load(url: string): void;
+        /**
+         * 给传入的函数绑定作用域，返回绑定后的函数。
+         * @param	fun 函数对象。
+         * @param	scope 函数作用域。
+         * @return 绑定后的函数。
+         */
+        static bindToThis(fun: Function, scope: any): Function;
+        /**
+         * 播放声音。
+         * @param startTime 开始时间,单位秒
+         * @param loops 循环次数,0表示一直循环
+         * @return 声道 SoundChannel 对象。
+         *
+         */
+        play(startTime?: number, loops?: number): MiniSoundChannel;
+        /**
+         * 获取总时间。
+         */
+        readonly duration: number;
+        /**
+         * 释放声音资源。
+         *
+         */
+        dispose(): void;
+    }
+}
+declare module laya.wx.mini {
+    import SoundChannel = laya.media.SoundChannel;
+    /**
+     * @private
+     * wxaudio 方式播放声音的音轨控制
+     */
+    class MiniSoundChannel extends SoundChannel {
+        constructor(audio: any, miniSound: MiniSound);
+        /**
+         * 给传入的函数绑定作用域，返回绑定后的函数。
+         * @param	fun 函数对象。
+         * @param	scope 函数作用域。
+         * @return 绑定后的函数。
+         */
+        static bindToThis(fun: Function, scope: any): Function;
+        /**
+         * 播放
+         */
+        play(): void;
+        /**
+         * 自动播放
+         * @param value
+         */
+        autoplay: boolean;
+        /**
+         * 当前播放到的位置
+         * @return
+         *
+         */
+        readonly position: number;
+        /**
+         * 获取总时间。
+         */
+        readonly duration: number;
+        /**
+         * 停止播放
+         *
+         */
+        stop(): void;
+        pause(): void;
+        loop: boolean;
+        resume(): void;
+        /**
+         * 获取音量
+         * @return
+         */
+        /**
+         * 设置音量
+         * @param v
+         *
+         */
+        volume: number;
+    }
+}
 declare module Laya {
     class AnimationContent extends laya.ani.AnimationContent {
     }
@@ -30279,11 +30982,41 @@ declare module Laya {
     }
     class Sprite3D extends laya.d3.core.Sprite3D {
     }
+    class Color extends laya.d3.core.trail.module.Color {
+    }
+    class Gradient extends laya.d3.core.trail.module.Gradient {
+    }
+    class GradientAlphaKey extends laya.d3.core.trail.module.GradientAlphaKey {
+    }
+    class GradientColorKey extends laya.d3.core.trail.module.GradientColorKey {
+    }
+    class GradientMode extends laya.d3.core.trail.module.GradientMode {
+    }
+    class TextureMode extends laya.d3.core.trail.module.TextureMode {
+    }
+    class TrailKeyFrame extends laya.d3.core.trail.module.TrailKeyFrame {
+    }
+    class TrailFilter extends laya.d3.core.trail.TrailFilter {
+    }
+    class TrailMaterial extends laya.d3.core.trail.TrailMaterial {
+    }
+    class TrailRenderElement extends laya.d3.core.trail.TrailRenderElement {
+    }
+    class TrailRenderer extends laya.d3.core.trail.TrailRenderer {
+    }
+    class TrailSprite3D extends laya.d3.core.trail.TrailSprite3D {
+    }
+    class VertexTrail extends laya.d3.core.trail.VertexTrail {
+    }
     class Transform3D extends laya.d3.core.Transform3D {
     }
     class TransformUV extends laya.d3.core.TransformUV {
     }
     class VRCamera extends laya.d3.core.VRCamera {
+    }
+    class CartoonMaterial extends laya.d3.extension.cartoonRender.CartoonMaterial {
+    }
+    class OutlineMaterial extends laya.d3.extension.cartoonRender.OutlineMaterial {
     }
     class DynamicBatch extends laya.d3.graphics.DynamicBatch {
     }
@@ -30488,6 +31221,8 @@ declare module Laya {
     class Shader3D extends laya.d3.shader.Shader3D {
     }
     class ShaderCompile3D extends laya.d3.shader.ShaderCompile3D {
+    }
+    class ShaderDefines extends laya.d3.shader.ShaderDefines {
     }
     class ShaderInit3D extends laya.d3.shader.ShaderInit3D {
     }
@@ -30881,8 +31616,6 @@ declare module Laya {
     }
     class ClassUtils extends laya.utils.ClassUtils {
     }
-    class Color extends laya.utils.Color {
-    }
     class Dictionary extends laya.utils.Dictionary {
     }
     class Dragging extends laya.utils.Dragging {
@@ -30941,30 +31674,12 @@ declare module Laya {
     }
     class Path extends laya.webgl.canvas.Path {
     }
-    interface ISaveData extends laya.webgl.canvas.save.ISaveData {
-    }
-    class SaveBase extends laya.webgl.canvas.save.SaveBase {
-    }
-    class SaveClipRect extends laya.webgl.canvas.save.SaveClipRect {
-    }
-    class SaveClipRectStencil extends laya.webgl.canvas.save.SaveClipRectStencil {
-    }
-    class SaveMark extends laya.webgl.canvas.save.SaveMark {
-    }
-    class SaveTransform extends laya.webgl.canvas.save.SaveTransform {
-    }
-    class SaveTranslate extends laya.webgl.canvas.save.SaveTranslate {
-    }
-    class WebGLContext2D extends laya.webgl.canvas.WebGLContext2D {
-    }
+    
     class GraphicsGL extends laya.webgl.display.GraphicsGL {
     }
     interface IMergeAtlasBitmap extends laya.webgl.resource.IMergeAtlasBitmap {
     }
-    class RenderTarget2D extends laya.webgl.resource.RenderTarget2D {
-    }
-    class RenderTargetMAX extends laya.webgl.resource.RenderTargetMAX {
-    }
+
     class WebGLCanvas extends laya.webgl.resource.WebGLCanvas {
     }
     class WebGLCharImage extends laya.webgl.resource.WebGLCharImage {
@@ -31005,8 +31720,6 @@ declare module Laya {
     }
     class Shader extends laya.webgl.shader.Shader {
     }
-    class ShaderDefines extends laya.webgl.shader.ShaderDefines {
-    }
     class ShaderValue extends laya.webgl.shader.ShaderValue {
     }
     class BasePoly extends laya.webgl.shapes.BasePoly {
@@ -31031,28 +31744,15 @@ declare module Laya {
     }
     interface ISubmit extends laya.webgl.submit.ISubmit {
     }
-    class Submit extends laya.webgl.submit.Submit {
-    }
-    class SubmitCanvas extends laya.webgl.submit.SubmitCanvas {
-    }
+    
     class SubmitCMD extends laya.webgl.submit.SubmitCMD {
     }
     class SubmitCMDScope extends laya.webgl.submit.SubmitCMDScope {
     }
-    class SubmitOtherIBVB extends laya.webgl.submit.SubmitOtherIBVB {
-    }
-    class SubmitScissor extends laya.webgl.submit.SubmitScissor {
-    }
-    class SubmitStencil extends laya.webgl.submit.SubmitStencil {
-    }
-    class SubmitTarget extends laya.webgl.submit.SubmitTarget {
-    }
-    class SubmitTexture extends laya.webgl.submit.SubmitTexture {
-    }
+    
     class CharSegment extends laya.webgl.text.CharSegment {
     }
-    class DrawText extends laya.webgl.text.DrawText {
-    }
+    
     class FontInContext extends laya.webgl.text.FontInContext {
     }
     interface ICharSegment extends laya.webgl.text.ICharSegment {
@@ -31069,10 +31769,12 @@ declare module Laya {
     }
     class MatirxArray extends laya.webgl.utils.MatirxArray {
     }
+    class Mesh2D extends laya.webgl.utils.Mesh2D {
+    }
+   
     class RenderSprite3D extends laya.webgl.utils.RenderSprite3D {
     }
-    class RenderState2D extends laya.webgl.utils.RenderState2D {
-    }
+   
     class ShaderCompile extends laya.webgl.utils.ShaderCompile {
     }
     class VertexBuffer2D extends laya.webgl.utils.VertexBuffer2D {
@@ -31081,6 +31783,13 @@ declare module Laya {
     }
     class WebGLContext extends laya.webgl.WebGLContext {
     }
+    class MiniAccelerator extends laya.wx.mini.MiniAccelerator {
+    }
+ 
+    // class Node extends PathFinding.core.Node {
+    // }
+    
+    
     class DebugPanel extends laya.debug.DebugPanel {
     }
     class DebugTool extends laya.debug.DebugTool {
@@ -31162,9 +31871,9 @@ declare class Laya {
      */
     static interface(name:String, superClass:Function):void;
 
-    static superSet(clas,o,prop,value);
+    static superSet(clas:any,o:any,prop:any,value:any);
 
-    static superGet(clas,o,prop);
+    static superGet(clas:any,o:any,prop:any);
 }
 /**全局配置*/
 declare class UIConfig {
@@ -31243,16 +31952,6 @@ declare module laya.debug{
          * 
          */     
          static init(underGame?:boolean,bgColor?:string):void;
-    }
-}
-declare module laya.wx.mini {
-    class MiniAdpter {
-        /**
-         * 初始化回调
-         * @param isPosMsg 是否需要在主域中自动将加载的文本数据自动传递到子域，默认 false
-         * @param isSon 是否是子域，默认为false
-         */
-        static init(isPosMsg?:boolean,isSon?:string): void;
     }
 }
 

@@ -1,5 +1,7 @@
 class Main extends eui.UILayer {
 
+    private static skin:string = "resources/my_skins/danyao.exml";
+
     protected createChildren(): void {
 
         super.createChildren();
@@ -35,7 +37,7 @@ class Main extends eui.UILayer {
     private async myRunGame()
     {
         await this.loadResource();//加载在default.res.json文件中配置的资源信息
-        this.myCreateScene();//配置场景
+        // this.myCreateScene();//配置场景
     }
 
     private myCreateScene():void
